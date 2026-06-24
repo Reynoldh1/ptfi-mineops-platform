@@ -33,14 +33,17 @@ export default function GisFreeportTwin() {
     }
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
     if (!isLoaded || !containerRef.current) return;
 
     const Cesium = (window as any).Cesium;
     if (!Cesium) return;
 
-    // Mengonfigurasi engine internal asset loader Cesium secara global di browser
-    Cesium.buildModuleUrl.setBaseUrl('https://unpkg.com/cesium@1.116.0/Build/Cesium/');
+    // 🔑 Token Cesium Ion Pribadi Reinold Haluk
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYzNhNTU5MzOTC4LTQ5ODktYjFkMS00OGZmUTU0YjI4ZDYiLCJpZCI6Mzk1MTY3LCJpYXQiOjE3NzI3OTEzOTE2MzN9.y4dADByVr_kq-6Q5zn-eAR3FFYy6ybSJMkSXcliDSKw';
+
+    // Mengonfigurasi engine internal asset loader Cesium secara global
+    Cesium.buildModuleUrl.setBaseUrl('https://unpkg.com/cesium@1.116.0/Build/Cesium');
 
     // Inisialisasi peta 3D Globe Cesium
     const viewer = new Cesium.Viewer(containerRef.current, {
