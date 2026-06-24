@@ -8,8 +8,6 @@ export default function GisFreeportTwin() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
-    // 1. Menyuntikkan stylesheet CSS Cesium ke Head secara aman
     if (!document.getElementById('cesium-cdn-css')) {
       const link = document.createElement('link');
       link.id = 'cesium-cdn-css';
@@ -17,8 +15,6 @@ export default function GisFreeportTwin() {
       link.href = 'https://unpkg.com/cesium@1.116.0/Build/Cesium/Widgets/widgets.css';
       document.head.appendChild(link);
     }
-
-    // 2. Menyuntikkan inti JavaScript engine Cesium secara asinkronus
     if (!document.getElementById('cesium-cdn-js')) {
       const script = document.createElement('script');
       script.id = 'cesium-cdn-js';
@@ -38,14 +34,8 @@ useEffect(() => {
 
     const Cesium = (window as any).Cesium;
     if (!Cesium) return;
-
-    // 🔑 Token Cesium Ion Pribadi Reinold Haluk
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYzNhNTU5MzOTC4LTQ5ODktYjFkMS00OGZmUTU0YjI4ZDYiLCJpZCI6Mzk1MTY3LCJpYXQiOjE3NzI3OTEzOTE2MzN9.y4dADByVr_kq-6Q5zn-eAR3FFYy6ybSJMkSXcliDSKw';
-
-    // Mengonfigurasi engine internal asset loader Cesium secara global
     Cesium.buildModuleUrl.setBaseUrl('https://unpkg.com/cesium@1.116.0/Build/Cesium');
-
-    // Inisialisasi peta 3D Globe Cesium
     const viewer = new Cesium.Viewer(containerRef.current, {
       animation: false,
       timeline: false,
@@ -55,8 +45,6 @@ useEffect(() => {
       navigationHelpButton: false,
       baseLayerPicker: true
     });
-
-    // Mengunci titik koordinat kamera ke area Tambang Terbuka Grasberg, PTFI Freeport, Papua
     const grasbergTarget = Cesium.Cartesian3.fromDegrees(137.1102, -4.0512, 5000);
     viewer.camera.setView({
       destination: grasbergTarget,
@@ -66,8 +54,6 @@ useEffect(() => {
         roll: 0.0
       }
     });
-
-    // Membersihkan instance memory map saat halaman dihancurkan
     return () => {
       if (viewer && !viewer.isDestroyed()) {
         viewer.destroy();
