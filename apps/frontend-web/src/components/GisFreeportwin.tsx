@@ -9,28 +9,31 @@ export default function GisFreeportTwin() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    (window as any).CESIUM_BASE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/';
+    (window as any).CESIUM_BASE_URL = 'https://cdn.jsdelivr.net/npm/cesium@1.116.0/Build/Cesium/';
 
     if (!document.getElementById('cesium-cdn-css')) {
       const link = document.createElement('link');
       link.id = 'cesium-cdn-css';
       link.rel = 'stylesheet';
-      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/Widgets/widgets.css';
-      link.crossOrigin = 'anonymous';
+      link.href = 'https://cdn.jsdelivr.net/npm/cesium@1.116.0/Build/Cesium/Widgets/widgets.css';
       document.head.appendChild(link);
     }
 
     if (!document.getElementById('cesium-cdn-js')) {
       const script = document.createElement('script');
       script.id = 'cesium-cdn-js';
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/Cesium.js';
-      script.crossOrigin = 'anonymous';
+      script.src = 'https://cdn.jsdelivr.net/npm/cesium@1.116.0/Build/Cesium/Cesium.js';
       script.async = true;
       script.onload = () => setIsLoaded(true);
       document.head.appendChild(script);
     } else {
       if ((window as any).Cesium) {
         setIsLoaded(true);
+      } else {
+        const existingScript = document.getElementById('cesium-cdn-js');
+        if (existingScript) {
+          existingScript.addEventListener('load', () => setIsLoaded(true));
+        }
       }
     }
   }, []);
@@ -42,7 +45,7 @@ export default function GisFreeportTwin() {
     if (!Cesium) return;
 
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYzNhNTU5MzOTC4LTQ5ODktYjFkMS00OGZmUTU0YjI4ZDYiLCJpZCI6Mzk1MTY3LCJpYXQiOjE3NzI3OTEzOTE2MzN9.y4dADByVr_kq-6Q5zn-eAR3FFYy6ybSJMkSXcliDSKw';
-    Cesium.buildModuleUrl.setBaseUrl('https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/');
+    Cesium.buildModuleUrl.setBaseUrl('https://cdn.jsdelivr.net/npm/cesium@1.116.0/Build/Cesium/');
 
     const viewer = new Cesium.Viewer(containerRef.current, {
       animation: false,
