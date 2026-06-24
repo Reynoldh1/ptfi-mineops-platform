@@ -1,0 +1,29 @@
+{
+    "name": "backend-api",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "devDependencies": {
+        "@types/node": "^26.0.0",
+        "typescript": "^6.0.3"
+    },
+    "dependencies": {
+        "@nestjs/common": "^11.1.27",
+        "@nestjs/core": "^11.1.27",
+        "@nestjs/platform-express": "^11.1.27",
+        "@nestjs/platform-socket.io": "^11.1.27",
+        "@nestjs/websockets": "^11.1.27",
+        "cors": "^2.8.6",
+        "express": "^5.2.1",
+        "reflect-metadata": "^0.2.2",
+        "rxjs": "^7.8.2",
+        "socket.io": "^4.8.3"
+    }
+}

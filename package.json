@@ -1,0 +1,14 @@
+{
+  "name": "ptfi-mineops-platform",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:frontend": "npm run dev --workspace=apps/frontend-web",
+    "dev:backend": "npm run start:dev --workspace=apps/backend-api",
+    "build:all": "npm run build --workspaces"
+  }
+}
