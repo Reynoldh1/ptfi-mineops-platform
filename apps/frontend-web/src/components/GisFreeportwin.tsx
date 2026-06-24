@@ -8,17 +8,21 @@ export default function GisFreeportTwin() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    (window as any).CESIUM_BASE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/';
+
     if (!document.getElementById('cesium-cdn-css')) {
       const link = document.createElement('link');
       link.id = 'cesium-cdn-css';
       link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/cesium@1.116.0/Build/Cesium/Widgets/widgets.css';
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/Widgets/widgets.css';
       document.head.appendChild(link);
     }
+
     if (!document.getElementById('cesium-cdn-js')) {
       const script = document.createElement('script');
       script.id = 'cesium-cdn-js';
-      script.src = 'https://unpkg.com/cesium@1.116.0/Build/Cesium/Cesium.js';
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/Cesium.js';
       script.async = true;
       script.onload = () => setIsLoaded(true);
       document.head.appendChild(script);
@@ -29,13 +33,15 @@ export default function GisFreeportTwin() {
     }
   }, []);
 
-useEffect(() => {
+  useEffect(() => {
     if (!isLoaded || !containerRef.current) return;
 
     const Cesium = (window as any).Cesium;
     if (!Cesium) return;
+
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYzNhNTU5MzOTC4LTQ5ODktYjFkMS00OGZmUTU0YjI4ZDYiLCJpZCI6Mzk1MTY3LCJpYXQiOjE3NzI3OTEzOTE2MzN9.y4dADByVr_kq-6Q5zn-eAR3FFYy6ybSJMkSXcliDSKw';
-    Cesium.buildModuleUrl.setBaseUrl('https://unpkg.com/cesium@1.116.0/Build/Cesium');
+    Cesium.buildModuleUrl.setBaseUrl('https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/');
+
     const viewer = new Cesium.Viewer(containerRef.current, {
       animation: false,
       timeline: false,
@@ -45,6 +51,7 @@ useEffect(() => {
       navigationHelpButton: false,
       baseLayerPicker: true
     });
+
     const grasbergTarget = Cesium.Cartesian3.fromDegrees(137.1102, -4.0512, 5000);
     viewer.camera.setView({
       destination: grasbergTarget,
@@ -54,6 +61,7 @@ useEffect(() => {
         roll: 0.0
       }
     });
+
     return () => {
       if (viewer && !viewer.isDestroyed()) {
         viewer.destroy();
@@ -62,6 +70,6 @@ useEffect(() => {
   }, [isLoaded]);
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '100%', margin: 0, padding: 0 }} />
+    <div ref={containerRef} style={{ width: '100%', height: '100vh', margin: 0, padding: 0, overflow: 'hidden' }} />
   );
 }
