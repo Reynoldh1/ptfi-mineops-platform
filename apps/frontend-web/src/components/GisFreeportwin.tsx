@@ -16,6 +16,7 @@ export default function GisFreeportTwin() {
       link.id = 'cesium-cdn-css';
       link.rel = 'stylesheet';
       link.href = 'https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/Widgets/widgets.css';
+      link.crossOrigin = 'anonymous';
       document.head.appendChild(link);
     }
 
@@ -23,6 +24,7 @@ export default function GisFreeportTwin() {
       const script = document.createElement('script');
       script.id = 'cesium-cdn-js';
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/Cesium.js';
+      script.crossOrigin = 'anonymous';
       script.async = true;
       script.onload = () => setIsLoaded(true);
       document.head.appendChild(script);
