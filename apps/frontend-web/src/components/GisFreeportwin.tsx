@@ -1,74 +1,87 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
-import Script from 'next/script';
+import { useEffect, useRef } from 'react';
 
 export default function GisFreeportTwin() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const viewerRef = useRef<any>(null);
 
   useEffect(() => {
-    // Pastikan script sudah load, container siap, dan berjalan di browser (bukan server)
-    if (!isLoaded || !containerRef.current || typeof window === 'undefined') return;
+    const initCesiumMap = () => {
+      const Cesium = (window as any).Cesium;
+      
+      if (!Cesium || viewerRef.current || !containerRef.current) return;
 
-    const Cesium = (window as any).Cesium;
-    if (!Cesium) return;
+      // 1. KEMBALIKAN KE CDNJS: Hindari unpkg.com agar tidak kena blokir CORS di Vercel
+      (window as any).CESIUM_BASE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/';
+      Cesium.buildModuleUrl.setBaseUrl('https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/');
 
-    // Set Base URL yang konsisten sebelum inisialisasi peta
-    (window as any).CESIUM_BASE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/';
-    Cesium.buildModuleUrl.setBaseUrl('https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/');
+      // 2. MASUKKAN TOKEN DARI SCREENSHOT ANDA:
+      // Hapus teks di bawah dan ganti dengan Token dari screenshot Cesium Ion Anda!
+      Cesium.Ion.defaultAccessToken = 'PASTE_TOKEN_ANDA_DI_SINI';
 
-    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYzNhNTU5MzOTC4LTQ5ODktYjFkMS00OGZmUTU0YjI4ZDYiLCJpZCI6Mzk1MTY3LCJpYXQiOjE3NzI3OTEzOTE2MzN9.y4dADByVr_kq-6Q5zn-eAR3FFYy6ybSJMkSXcliDSKw';
+      // Render Peta
+      const viewer = new Cesium.Viewer(containerRef.current, {
+        animation: false,
+        timeline: false,
+        infoBox: true,
+        selectionIndicator: true,
+        sceneModePicker: true,
+        navigationHelpButton: false,
+        baseLayerPicker: true,
+        terrain: Cesium.Terrain.fromWorldTerrain() // 3D Grasberg Terrain
+      });
 
-    const viewer = new Cesium.Viewer(containerRef.current, {
-      animation: false,
-      timeline: false,
-      infoBox: true,
-      selectionIndicator: true,
-      sceneModePicker: true,
-      navigationHelpButton: false,
-      baseLayerPicker: true
-    });
+      viewerRef.current = viewer;
 
-    const grasbergTarget = Cesium.Cartesian3.fromDegrees(137.1102, -4.0512, 5000);
-    viewer.camera.setView({
-      destination: grasbergTarget,
-      orientation: {
-        heading: Cesium.Math.toRadians(0.0),
-        pitch: Cesium.Math.toRadians(-35.0),
-        roll: 0.0
+      // Arahkan ke Grasberg
+      const grasbergTarget = Cesium.Cartesian3.fromDegrees(137.1102, -4.0512, 5000);
+      viewer.camera.setView({
+        destination: grasbergTarget,
+        orientation: {
+          heading: Cesium.Math.toRadians(0.0),
+          pitch: Cesium.Math.toRadians(-35.0),
+          roll: 0.0
+        }
+      });
+    };
+
+    const checkCesiumInterval = setInterval(() => {
+      if (typeof window !== 'undefined' && (window as any).Cesium) {
+        clearInterval(checkCesiumInterval);
+        initCesiumMap();
       }
-    });
+    }, 100);
 
     return () => {
-      if (viewer && !viewer.isDestroyed()) {
-        viewer.destroy();
+      clearInterval(checkCesiumInterval);
+      if (viewerRef.current && !viewerRef.current.isDestroyed()) {
+        viewerRef.current.destroy();
+        viewerRef.current = null;
       }
     };
-  }, [isLoaded]);
+  }, []);
 
   return (
     <>
-      {/* 1. Load CSS secara native di struktur Next.js */}
+      {/* Load CSS dari cdnjs */}
       <link 
         rel="stylesheet" 
         href="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/Widgets/widgets.css" 
-        crossOrigin="anonymous" 
+        crossOrigin="anonymous"
       />
       
-      {/* 2. Load JS menggunakan komponen Script resmi Next.js */}
-      <Script
-        src="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/Cesium.js"
-        strategy="afterInteractive"
+      {/* Load JS dari cdnjs dengan crossOrigin */}
+      <script 
+        src="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.116.0/Build/Cesium/Cesium.js" 
+        async={false} 
+        defer 
         crossOrigin="anonymous"
-        onLoad={() => {
-          setIsLoaded(true); // Memicu useEffect di atas hanya setelah Cesium 100% siap
-        }}
       />
 
       <div 
         ref={containerRef} 
-        style={{ width: '100%', height: '100vh', margin: 0, padding: 0, overflow: 'hidden' }} 
+        style={{ width: '100%', height: '100vh', margin: 0, padding: 0, backgroundColor: '#000' }} 
       />
     </>
   );
